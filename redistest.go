@@ -24,8 +24,8 @@ func sendRandomValues() {
 	fmt.Println("Sending data")
 	rand.Seed(time.Now().UnixNano())
 
-	for i := 0; i < 100; i++ {
-		err := rdb.Set(ctx, "key"+strconv.Itoa(i), rand.Int(), 0).Err()
+	for {
+		err := rdb.Set(ctx, "key"+strconv.Itoa(rand.Intn(1000)), rand.Intn(1000000), 0).Err()
 		if err != nil {
 			panic(err)
 		}
@@ -45,16 +45,19 @@ func receiveValues() {
 
 	fmt.Println("Making query")
 
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 1000; i++ {
 		val, err := rdb.Get(ctx, "key"+strconv.Itoa(i)).Result()
 		if err != nil {
 			if err == redis.Nil {
 				fmt.Println("key does not exist")
-				return
+				//return
 			}
-			panic(err)
+			//panic(err)
 		}
 		fmt.Println(val)
+		if i == 999 {
+			i = 0
+		}
 	}
 
 }
